@@ -28,7 +28,7 @@ jobs:
       - name: Docker build and Push to ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: 851717133722.dkr.ecr.us-east-1.amazonaws.com/timeservice-timeservice-ecr-dev
+          REPOSITORY: timeservice-timeservice-ecr-dev
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
