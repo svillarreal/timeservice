@@ -1,0 +1,32 @@
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: build
+        run: npm ci
+      - name: Get AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::851717133722:role/proevolutionit-svillarreal-github-repo-role
+          aws-region: us-east-1
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Docker build and Push to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: 851717133722.dkr.ecr.us-east-1.amazonaws.com/timeservice-timeservice-ecr-dev
+          IMAGE_TAG: $ {{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: particle41-app-deployment
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: particle41-app
+    template:
+        metadata:
+            labels:
+                app: particle41-app
+        spec:
+            containers:
+                - name: particle41-app
+                  image: 851717133722.dkr.ecr.us-east-1.amazonaws.com/particle41-ecr-dev:latest
+                  resources:
+                      limits:
+                          memory: "128Mi"
+                          cpu: "500m"
+                  ports:
+                      - containerPort: 3000
+                  env:
+                      - name: dev
